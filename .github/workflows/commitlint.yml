@@ -25,12 +25,4 @@ jobs:
 
       - name: Check Commit Titles for Regular Expression Match
         run: |
-          REGEX="\b(?:wip|work\s*in\s*progress)\b"
-          COMMIT_TITLES=$(git log -n 2 --oneline )
-          for TITLE in $COMMIT_TITLES; do
-            echo "${{ github.event.pull_request.head.sha }}"
-            if [[ "$TITLE" =~ $REGEX ]]; then
-              echo "Failing the pull request."
-              exit 1
-            fi
-          done
+            [[ "${{ env.FOO }}" == +(wip|work in progress) ]]
