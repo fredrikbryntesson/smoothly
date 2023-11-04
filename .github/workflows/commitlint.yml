@@ -14,6 +14,7 @@ jobs:
           REGEX="\b(?:wip|work\s*in\s*progress)\b"
           COMMIT_TITLES=$(git log --oneline ${{ github.event.before }}..${{ github.sha }} --format="%s")
           for TITLE in $COMMIT_TITLES; do
+            echo "$TITLE"
             if [[ "$TITLE" =~ $REGEX ]]; then
               echo "Failing the pull request."
               exit 1
