@@ -9,12 +9,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+
+      - name: Get number
+        run: echo "NUMBER=${{github.event.pull_request.commits}}" >> $GITHUB_ENV
+
+      - name: Use the value
+        run: echo "${{ env.NUMBER }}"
+
+      - name: Get SHA of First Commit
+        run: echo "FOO=$(git log --oneline --max-count=1 --skip=${{ env.NUMBER }})" >> $GITHUB_ENV
+      - name: Use the value
+        run: echo "${{ env.FOO }}"
+
       - name: Check Commit Titles for Regular Expression Match
         run: |
           REGEX="\b(?:wip|work\s*in\s*progress)\b"
-          COMMIT_TITLES=$(git log --oneline ${{ github.event.before }}..${{ github.sha }} --format="%s")
+          COMMIT_TITLES=$(git log -n 2 --oneline )
           for TITLE in $COMMIT_TITLES; do
-            echo "$TITLE"
+            echo "${{ github.event.pull_request.head.sha }}"
             if [[ "$TITLE" =~ $REGEX ]]; then
               echo "Failing the pull request."
               exit 1
