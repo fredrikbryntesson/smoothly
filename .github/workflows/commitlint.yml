@@ -1,0 +1,21 @@
+name: Check Commit Titles
+
+on:
+  pull_request:
+
+jobs:
+  check-regexp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Check Commit Titles for Regular Expression Match
+        run: |
+          REGEX="\b(?:wip|work\s*in\s*progress)\b"
+          COMMIT_TITLES=$(git log --oneline ${{ github.event.before }}..${{ github.sha }} --format="%s")
+          for TITLE in $COMMIT_TITLES; do
+            if [[ "$TITLE" =~ $REGEX ]]; then
+              echo "Failing the pull request."
+              exit 1
+            fi
+          done
